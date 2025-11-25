@@ -31,7 +31,7 @@ cat ~/.ssh/new_id_rsa.pub
 ssh -T git@github.com
 ```
 如果看到 "Hi username! You've successfully authenticated" 就成功了。
-
+以及，似乎不能用校园网链接，我是开的流量
 ---
 
 ## 二、在 GitHub 创建新仓库
@@ -48,7 +48,7 @@ ssh -T git@github.com
 4. 点击 "Create repository"
 
 ### 2.2 记录仓库地址
-创建后会显示 SSH 地址，类似：
+创建后会显示 SSH 地址，类似：（不用HTTPS而是用SSH，注意）
 ```
 git@github.com:你的用户名/shudao_11_24.git
 ```
@@ -69,6 +69,10 @@ git init
 
 ### 3.2 配置 Git 用户信息（如果之前没配置）
 ```bash
+# 检查是否配置姓名和邮箱
+git config user.name
+git config user.email
+
 git config user.name "你的名字"
 git config user.email "your_email@example.com"
 
@@ -78,7 +82,7 @@ git config --global user.email "your_email@example.com"
 ```
 
 ### 3.3 检查 .gitignore
-查看 .gitignore 内容：
+查看 .gitignore 内容：（哪些文件或目录不要纳入版本控制（Git 不跟踪它们））
 ```bash
 cat .gitignore
 ```
