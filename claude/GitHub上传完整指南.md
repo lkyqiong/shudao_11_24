@@ -114,7 +114,7 @@ git commit -m "Initial commit: 云游蜀道项目初始化"
 ### 4.1 关联 GitHub 远程仓库
 ```bash
 # 方式1：使用 SSH（推荐）
-git remote add origin git@github.com:你的用户名/shudao_11_24.git
+git remote add origin git@github.com:lkyqiong/shudao_11_24.git
 
 # 方式2：如果上面添加错了，可以删除后重新添加
 git remote remove origin
@@ -143,9 +143,43 @@ git push -u origin main
 
 ---
 
-## 五、常见问题和解决方案
+---
 
-### 5.1 推送失败：Permission denied (publickey)
+## 五、关联远程仓库并推送
+
+### 5.1 之后修改提交
+```bash
+#查看修改状态
+git status
+
+#将修改加入暂存区
+git add <文件名>
+#或
+git add .
+
+#提交修改
+git commit -m "描述你的修改内容"
+
+#推送到远程仓库
+git push
+
+#一个提示
+git pull
+#每次修改前先用 git pull 拉取远程最新更新，避免冲突
+```
+
+### 5.2 完整流程示例
+```bash
+git status          # 查看修改
+git add .           # 添加修改到暂存区
+git commit -m "修改描述"  # 提交
+git push            # 推送到 GitHub
+```
+
+
+## 六、常见问题和解决方案
+
+### 6.1 推送失败：Permission denied (publickey)
 **原因：** SSH 密钥没有正确配置
 
 **解决：**
@@ -161,7 +195,7 @@ cat ~/.ssh/id_rsa.pub
 ssh -T git@github.com
 ```
 
-### 5.2 推送失败：Connection timed out
+### 6.2 推送失败：Connection timed out
 **原因：** 网络问题（校园网可能屏蔽了 GitHub）
 
 **解决：**
@@ -172,7 +206,7 @@ git remote set-url origin https://github.com/你的用户名/shudao_11_24.git
 git push -u origin main
 ```
 
-### 5.3 警告：LF will be replaced by CRLF
+### 6.3 警告：LF will be replaced by CRLF
 **原因：** Windows 和 Linux 换行符不同
 
 **解决（推荐）：**
@@ -180,7 +214,7 @@ git push -u origin main
 git config core.autocrlf true
 ```
 
-### 5.4 推送到 master 但 GitHub 默认是 main
+### 6.4 推送到 master 但 GitHub 默认是 main
 **情况：** GitHub 新仓库默认分支是 main，但本地提交到了 master
 
 **解决：**
@@ -194,7 +228,7 @@ git push -u origin master
 # 然后在 GitHub 网页上修改默认分支为 master
 ```
 
-### 5.5 .gitignore 不生效
+### 6.5 .gitignore 不生效
 **原因：** 文件已经被 Git 跟踪了
 
 **解决：**
@@ -208,7 +242,7 @@ git push
 
 ---
 
-## 六、完整的命令流程（快速版）
+## 七、完整的命令流程（快速版）
 
 ```bash
 # 1. 进入项目目录
@@ -239,9 +273,9 @@ git push -u origin main
 
 ---
 
-## 七、后续的日常操作
+## 八、后续的日常操作
 
-### 7.1 添加新功能后提交
+### 8.1 添加新功能后提交
 ```bash
 # 1. 查看修改
 git status
@@ -258,26 +292,26 @@ git commit -m "feat: 添加退出登录功能"
 git push
 ```
 
-### 7.2 查看提交历史
+### 8.2 查看提交历史
 ```bash
 git log
 # 或简洁版
 git log --oneline
 ```
 
-### 7.3 拉取远程更新
+### 8.3 拉取远程更新
 ```bash
 git pull origin main
 ```
 
-### 7.4 查看远程仓库信息
+### 8.4 查看远程仓库信息
 ```bash
 git remote -v
 ```
 
 ---
 
-## 八、提交信息规范（建议）
+## 九、提交信息规范（建议）
 
 使用语义化的提交信息：
 
@@ -293,7 +327,7 @@ git remote -v
 
 ---
 
-## 九、项目文件结构说明
+## 十、项目文件结构说明
 
 当前项目结构：
 ```
@@ -321,9 +355,9 @@ shudao_11_24/
 
 ---
 
-## 十、注意事项
+## 十一、注意事项
 
-### 10.1 敏感信息
+### 11.1 敏感信息
 ⚠️ **确保不要提交敏感信息：**
 - API 密钥
 - 数据库密码
@@ -333,15 +367,15 @@ shudao_11_24/
 1. 从历史记录中删除
 2. 立即修改密钥/密码
 
-### 10.2 大文件
+### 11.2 大文件
 - GitHub 单个文件不能超过 100MB
 - 建议大文件使用 Git LFS 或放到其他存储
 
-### 10.3 node_modules
+### 11.3 node_modules
 - **绝对不要提交** node_modules（已在 .gitignore 中）
 - 其他人 clone 后运行 `npm install` 自动安装依赖
 
-### 10.4 协作开发
+### 11.4 协作开发
 如果多人协作：
 1. 使用分支开发功能
 2. 通过 Pull Request 合并代码
@@ -349,11 +383,11 @@ shudao_11_24/
 
 ---
 
-## 十一、GitHub 仓库页面说明
+## 十二、GitHub 仓库页面说明
 
 上传成功后，GitHub 仓库页面应该包含：
 
-### 11.1 README.md（建议添加）
+### 12.1 README.md（建议添加）
 创建 `README.md` 介绍项目：
 ```markdown
 # 云游蜀道
@@ -384,12 +418,12 @@ npm run build
 \`\`\`
 ```
 
-### 11.2 LICENSE（可选）
+### 12.2 LICENSE（可选）
 选择合适的开源协议，如 MIT、Apache 2.0 等。
 
 ---
 
-## 十二、快速检查清单
+## 十三、快速检查清单
 
 在推送前检查：
 
@@ -411,7 +445,7 @@ npm run build
 
 ---
 
-## 十三、总结
+## 十四、总结
 
 完整流程回顾：
 1. ✅ 配置 SSH 密钥
