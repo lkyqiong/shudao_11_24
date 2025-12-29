@@ -1,252 +1,351 @@
-# Vue 3 + TypeScript + Vite
-
 # 云游蜀道 WebGIS 系统
+
+> "云上漫游，踏遍古今蜀路"
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Vue](https://img.shields.io/badge/Vue-3.5-brightgreen.svg)](https://vuejs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-latest-009688.svg)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-336791.svg)](https://www.postgresql.org/)
 
 ## 项目简介
 
-云游蜀道是一个基于 Vue3 的 WebGIS 系统，通过"地理关联 + AI 赋能"重塑蜀道文化的数字化传承。
-现在的README都是claude写的，和真实框架基本相同，但目前的代码只搭了个框架
+云游蜀道是一个基于 Vue 3 的 WebGIS 系统，以"地理关联 + AI 赋能"为核心，重塑蜀道文化的数字化传承。平台以**古迹篇、新景篇、脉络篇、行迹篇**为主线，从千年古道到现代文旅，从历史脉络到个性行程，打造一部可交互的蜀道百科全书，让你在地图中读史，在行走中感悟蜀道之魂。
+
+### 核心特性
+
+- 🗺️ **地图可视化**：基于 OpenLayers 的地理数据可视化展示
+- 📊 **知识图谱**：ECharts 力导向布局呈现文化要素关联
+- 🔍 **多维筛选**：按朝代、地点、类别等维度灵活检索
+- 📍 **打卡收藏**：用户个性化景点打卡和收藏功能
+- 🛤️ **路线规划**：支持 KML 文件导入和手动地图定点创建路线
+- 👤 **用户管理**：完整的注册登录和用户数据隔离机制
 
 ## 技术栈
 
-- **前端框架**: Vue 3 + Vite
-- **路由管理**: Vue Router 4
-- **状态管理**: Pinia
-- **UI 组件库**: Element Plus
-- **地图库**: Mapbox GL JS
-- **图表库**: ECharts
-- **HTTP 客户端**: Axios
+### 前端技术
 
-## 项目结构
+- **核心框架**：Vue 3.5 (Composition API + `<script setup>`)
+- **构建工具**：Vite 7.2
+- **编程语言**：TypeScript / JavaScript
+- **路由管理**：Vue Router 4
+- **地图引擎**：OpenLayers 10.7
+- **图表库**：ECharts 6.0
+- **HTTP 客户端**：Fetch API / Axios
+
+### 后端技术
+
+- **Web 框架**：FastAPI (Python)
+- **数据库**：PostgreSQL 14+
+- **数据库驱动**：psycopg2
+- **数据验证**：Pydantic
+- **内网穿透**：natapp（用于数据库远程访问）
+
+## 仓库架构
 
 ```
-cloud-tour-shudao/
-├── public/                    # 静态资源
-├── src/
-│   ├── assets/               # 资源文件
-│   │   ├── images/          # 图片资源
-│   │   └── styles/          # 全局样式
-│   │       └── global.scss
-│   ├── components/           # 公共组件
-│   │   ├── common/          # 通用组件
-│   │   │   ├── Header.vue   # 头部导航
-│   │   │   ├── Sidebar.vue  # 侧边栏
-│   │   │   └── AIChat.vue   # AI对话组件
-│   │   ├── map/             # 地图相关组件
-│   │   │   ├── BaseMap.vue  # 基础地图
-│   │   │   ├── HeatMap.vue  # 热力图
-│   │   │   └── MarkerPopup.vue # 标记弹窗
-│   │   └── charts/          # 图表组件
-│   │       ├── PieChart.vue
-│   │       └── BarChart.vue
-│   ├── views/               # 页面组件
-│   │   ├── auth/           # 认证页面
-│   │   │   ├── Login.vue   # 登录页
-│   │   │   └── Register.vue # 注册页
-│   │   ├── home/           # 首页系列
-│   │   │   ├── HomeLayout.vue
-│   │   │   ├── Introduction.vue
-│   │   │   ├── Help.vue
-│   │   │   ├── Version.vue
-│   │   │   ├── Contact.vue
-│   │   │   └── About.vue
-│   │   ├── heritage/       # 古迹篇
+shudao_11_24/
+├── backend/                    # 后端服务
+│   ├── main.py                # FastAPI 主入口
+│   ├── routes_api.py          # 路线管理 API
+│   └── actions_api.py         # 用户行为 API（打卡、收藏）
+│
+├── src/                        # 前端源代码
+│   ├── assets/                # 静态资源
+│   │   ├── images/           # 图片资源
+│   │   └── data/             # 本地数据文件（CSV）
+│   │
+│   ├── components/            # 公共组件
+│   │   ├── common/           # 通用组件
+│   │   │   ├── LeftSidebar.vue   # 左侧边栏
+│   │   │   └── RightSidebar.vue  # 右侧边栏
+│   │   ├── map/              # 地图组件
+│   │   │   └── BaseMap.vue   # 基础地图组件
+│   │   └── graph/            # 图谱组件
+│   │       └── KnowledgeGraph.vue # 知识图谱
+│   │
+│   ├── views/                 # 页面组件
+│   │   ├── auth/             # 认证页面
+│   │   │   ├── Login.vue     # 登录页
+│   │   │   └── Register.vue  # 注册页
+│   │   ├── home/             # 首页
+│   │   │   └── HomeLayout.vue
+│   │   ├── heritage/         # 古迹篇
 │   │   │   ├── HeritageLayout.vue
-│   │   │   ├── Poetry.vue  # 诗词
-│   │   │   ├── Intangible.vue # 非遗
-│   │   │   └── History.vue # 历史
-│   │   ├── scenery/        # 新景篇
-│   │   │   └── SceneryLayout.vue
-│   │   ├── network/        # 脉络篇
+│   │   │   └── components/   # 子组件
+│   │   ├── scenery/          # 新景篇
+│   │   │   ├── SceneryLayout.vue
+│   │   │   └── components/   # 景点详情、打卡组件
+│   │   ├── network/          # 脉络篇
 │   │   │   └── NetworkLayout.vue
-│   │   ├── route/          # 行迹篇
+│   │   ├── route/            # 行迹篇
 │   │   │   └── RouteLayout.vue
-│   │   └── user/           # 用户中心
+│   │   └── user/             # 用户中心
 │   │       └── Profile.vue
-│   ├── router/             # 路由配置
+│   │
+│   ├── services/              # API 服务层
+│   │   ├── api.ts            # 通用数据接口
+│   │   ├── routeService.ts   # 路线服务
+│   │   └── checkinService.ts # 打卡收藏服务
+│   │
+│   ├── utils/                 # 工具函数
+│   │   └── graphBuilder.ts   # 知识图谱构建工具
+│   │
+│   ├── router/                # 路由配置
 │   │   └── index.ts
-│   ├── stores/             # 状态管理
-│   │   ├── user.js         # 用户状态
-│   │   ├── map.js          # 地图状态
-│   │   └── chat.js         # 对话状态
-│   ├── api/                # API接口
-│   │   ├── auth.js         # 认证接口
-│   │   ├── heritage.js     # 古迹接口
-│   │   ├── scenery.js      # 景点接口
-│   │   └── route.js        # 路线接口
-│   ├── utils/              # 工具函数
-│   │   ├── request.js      # HTTP请求封装
-│   │   └── mapUtils.js     # 地图工具
-│   ├── App.vue             # 根组件
-│   ├── main.ts             # 入口文件
-│   └── shims-vue.d.ts      # 让 TS 知道 .vue 文件是 Vue 组件，可以导入
-├── .env                    # 环境变量
-├── .gitignore
-├── index.html
-├── package.json
-├── vite.config.js
-└── README.md
+│   │
+│   ├── App.vue               # 根组件
+│   └── main.ts               # 入口文件
+│
+├── public/                     # 静态资源（不经过 Vite 处理）
+├── package.json               # 前端依赖配置
+├── vite.config.ts            # Vite 配置
+├── tsconfig.json             # TypeScript 配置
+├── 新电脑部署指南.md          # 部署文档
+└── README.md                  # 本文件
 ```
 
-## 功能模块
+## 快速开始
 
-### 1. 认证系统（页面 1-2）
-- 登录页面：用户名密码登录
-- 注册页面：新用户注册
-- 点击"去登录"/"去注册"可切换页面
+### 环境要求
 
-### 2. 首页系列（页面 3-7）
-登录成功后跳转到首页，包含以下子页面：
-- **平台简介**: 系统介绍和功能概览
-- **使用帮助**: 操作指南
-- **版本介绍**: 版本更新说明
-- **联系我们**: 联系方式
-- **关于我们**: 团队信息
+- Node.js >= 16.0
+- Python >= 3.8
+- PostgreSQL >= 14.0
+- npm 或 yarn
 
-### 3. 古迹篇（页面 8-18）
-展示蜀道历史文化遗产，分为三个部分：
+### 1. 克隆仓库
 
-#### 诗词部分（页面 8-12）
-- 筛选功能：按朝代、诗人、地点筛选
-- 图表展示：可视化诗词分布统计
-- 诗文地脉：地图展示诗词分布
-- 详情展示：点击地图标记查看诗词详情
-- 热力图：展示诗词密集区域
-
-#### 非遗部分（页面 13-15）
-- 筛选展示：按类别筛选非遗项目
-- 图表展示：可视化非遗分布
-- 详情展示：点击地图查看非遗详情
-
-#### 历史部分（页面 16-18）
-- 筛选功能：按朝代、事件类型筛选
-- 图表展示：历史事件时间轴
-- 详情展示：查看历史事件详情
-
-### 4. 新景篇（页面 19-22）
-- 景点信息：左侧边栏显示景点详情
-- 打卡功能：点击打卡按钮记录游览
-- 上传文件：支持上传图片和文字记录
-- AI对话：右侧AI助手解答景点问题
-
-### 5. 脉络篇（页面 23-24）
-- 知识图谱：可视化展示蜀道文化关系网络
-- 筛选查询：按类型、地点筛选节点
-- AI对话：辅助理解知识关联
-
-### 6. 行迹篇（页面 25-26）
-- 路线展示：显示路线详情和剖面图
-- 添加路线：
-  - 上传KML文件导入路线
-  - 手动地图定点创建路线
-- 路线管理：保存和编辑个人路线
-
-### 7. 用户中心（页面 27-29）
-- 我的路线：查看保存的路线
-- 已打卡景点：查看打卡记录
-- 我的蜀片：查看上传的图片
-- 我的碎片：查看文字记录
-- 用户信息：个人资料管理
-
-## 核心特性
-
-### AI 对话功能
-- 点击右上角 AI 图标或搜索框右侧按钮打开
-- 支持关于蜀道的各类问题咨询
-- 在各个页面保持上下文连续性
-
-### 侧边栏设计
-- 左侧边栏：筛选条件和图表展示
-- 右侧边栏：AI 对话界面
-- 点击小箭头图标可展开/收起
-
-### 导航系统
-- 顶部导航：古迹篇、新景篇、脉络篇、行迹篇
-- 右上角：AI 对话、搜索、用户中心、首页按钮
-- 各页面间可灵活跳转
-
-## 安装和运行
-
-### 安装依赖
 ```bash
+git clone https://github.com/lkyqiong/shudao_11_24.git
+cd shudao_11_24
+```
+
+### 2. 前端安装与运行
+
+```bash
+# 安装依赖
 npm install
-```
 
-### 开发环境运行
-```bash
+# 启动开发服务器（默认端口 5173）
 npm run dev
-```
 
-### 生产环境构建
-```bash
+# 生产环境构建
 npm run build
-```
 
-### 预览构建结果
-```bash
+# 预览构建结果
 npm run preview
 ```
 
-## 环境变量配置
+前端服务将运行在 `http://localhost:5173`
 
-创建 `.env` 文件：
+### 3. 后端安装与运行
+
+```bash
+# 进入后端目录
+cd backend
+
+# 安装 Python 依赖
+pip install fastapi uvicorn psycopg2-binary pydantic
+
+# 启动 FastAPI 服务（默认端口 8000）
+python main.py
+# 或使用 uvicorn
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
-VITE_API_BASE_URL=http://localhost:8080/api
-VITE_MAPBOX_TOKEN=your_mapbox_token
+
+后端服务将运行在 `http://localhost:8000`
+API 文档自动生成在 `http://localhost:8000/docs`
+
+### 4. 数据库配置
+
+#### 创建数据库
+
+```sql
+CREATE DATABASE shudao;
+\c shudao;
 ```
 
-## 开发规范
+#### 创建 Schema
 
-### 组件命名
-- 使用 PascalCase 命名组件文件
-- 组件名应具有描述性
+```sql
+CREATE SCHEMA geo;
+CREATE SCHEMA poems;
+CREATE SCHEMA heritage;
+CREATE SCHEMA history;
+CREATE SCHEMA scenic;
+CREATE SCHEMA users;
+CREATE SCHEMA tags;
+CREATE SCHEMA actions;
+```
 
-### 代码风格
-- 使用 Vue 3 Composition API
-- 使用 `<script setup>` 语法
-- 合理使用 TypeScript（可选）
+#### 修改数据库连接配置
 
-### 样式规范
-- 使用 SCSS 预处理器
-- 采用 scoped 样式避免污染
-- 统一使用设计系统的颜色和尺寸变量
+编辑 `backend/main.py` 和 `backend/routes_api.py`、`backend/actions_api.py` 中的数据库连接信息：
 
-## 后端接口要求
-
-所有接口返回格式：
-```json
-{
-  "code": 200,
-  "message": "success",
-  "data": {}
+```python
+DB_CONFIG = {
+    "host": "localhost",      # 数据库地址
+    "port": 5432,             # 数据库端口
+    "dbname": "shudao",       # 数据库名称
+    "user": "postgres",       # 用户名
+    "password": "your_password"  # 密码
 }
 ```
 
-## 注意事项
+数据库表结构包括8个Schema（geo、poems、heritage、history、scenic、users、tags、actions），详细的表结构和字段说明请参考 `新电脑部署指南.md`
 
-1. **地图密钥**: 需要配置 Mapbox API Token
-2. **图片资源**: 需要准备相应的图片素材
-3. **API 接口**: 需要对接后端 API
-4. **浏览器兼容**: 推荐使用现代浏览器（Chrome, Firefox, Edge）
+## 功能模块
 
-## 待实现功能
+### 🔐 认证系统
 
-- [ ] 完善所有页面的具体实现
-- [ ] 集成真实的地图数据
-- [ ] 实现 AI 对话功能
-- [ ] 完善用户权限管理
-- [ ] 添加数据缓存机制
-- [ ] 优化移动端适配
-- [ ] 添加单元测试
+- 用户注册：创建账户，密码 SHA256 加密存储
+- 用户登录：验证身份，LocalStorage 持久化会话
+- 路由守卫：未登录用户自动跳转登录页
 
-## 贡献指南
+### 🏛️ 古迹篇
+
+探索蜀道历史文化遗产，分为三个子模块：
+
+- **诗词**：按朝代、作者、地点筛选诗词，地图标记展示诗词地理分布，热力图显示诗词密集区域
+- **非遗**：按类别筛选非物质文化遗产，图表统计非遗分布
+- **历史**：按时期、性质筛选历史事件，地图展示事件发生地点
+
+### 🏞️ 新景篇
+
+现代景点浏览与互动：
+
+- **景点详情**：左侧边栏展示景点名称、等级、评分、推荐理由等信息
+- **打卡功能**：右侧边栏支持景点打卡，可添加文字备注
+- **收藏功能**：收藏喜欢的景点，实时显示收藏状态
+
+### 🕸️ 脉络篇
+
+知识图谱可视化展示文化要素关联：
+
+- **图谱展示**：ECharts 力导向布局，诗词、非遗、历史、景点四类节点
+- **关系构建**：基于地理位置、历史时期、人物等属性建立边关系
+- **交互探索**：点击节点展开关联节点，筛选面板按维度过滤
+- **数据统计**：实时显示各类数据数量分布
+
+### 🛤️ 行迹篇
+
+路线规划与管理：
+
+- **预设路线**：展示金牛道、米仓道等经典蜀道路线
+- **自定义路线**：支持上传 KML 文件或手动地图定点创建
+- **路线详情**：查看路线剖面图、途经点、总距离等信息
+- **用户隔离**：每个用户独立管理自己的路线
+
+### 👤 用户中心
+
+个人数据管理：
+
+- **我的路线**：查看和管理已创建的路线
+- **景点打卡**：查看打卡记录（景点名称、打卡时间、备注）
+- **统计信息**：路线数量、打卡数量、总里程统计
+
+## API 接口说明
+
+### 认证接口
+
+- `POST /api/auth/register` - 用户注册
+- `POST /api/auth/login` - 用户登录
+
+### 数据查询接口
+
+- `GET /api/poems` - 获取诗词数据
+- `GET /api/heritage` - 获取非遗数据
+- `GET /api/history` - 获取历史事件数据
+- `GET /api/scenic` - 获取景点数据
+- `GET /api/filters/options` - 获取筛选选项
+
+### 路线接口
+
+- `GET /api/routes?username=xxx` - 获取用户路线
+- `POST /api/routes?username=xxx` - 创建路线
+- `PUT /api/routes/{id}` - 更新路线
+- `DELETE /api/routes/{id}` - 删除路线
+- `GET /api/routes/summary?username=xxx` - 获取路线摘要
+
+### 用户行为接口
+
+- `POST /api/actions/checkins` - 创建打卡记录
+- `GET /api/actions/checkins?username=xxx` - 获取打卡记录
+- `POST /api/actions/favorites` - 添加收藏
+- `DELETE /api/actions/favorites/{id}?username=xxx` - 取消收藏
+- `GET /api/actions/favorites/check/{id}?username=xxx` - 检查收藏状态
+
+详细接口文档：`http://localhost:8000/docs`（FastAPI 自动生成）
+
+## 部署说明
+
+### 前端部署
+
+```bash
+# 构建生产版本
+npm run build
+
+# dist 目录即为静态文件，可部署到 Nginx、Apache 等服务器
+```
+
+### 后端部署
+
+```bash
+# 使用 uvicorn 运行
+uvicorn main:app --host 0.0.0.0 --port 8000
+
+# 或使用 gunicorn（生产环境推荐）
+gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker
+```
+
+### 数据库远程访问
+
+本项目使用 **natapp** 进行内网穿透，将本地 PostgreSQL 数据库映射到公网端口，实现团队协作开发时的数据库远程访问。
+
+**natapp 配置信息**：
+- 官网地址：https://natapp.cn
+- 转发地址：`tcp://0706193a7e944d72.natapp.cc:30543 -> 127.0.0.1:5432`
+- 版本：2.5.1
+
+详细部署步骤请参考 `新电脑部署指南.md`
+不过这个接口有效期有限
+
+## 开发团队
+
+**本组成员**：李坤阳，蔡佳彤，薛景阳
+
+同时，感谢另外六位同学在上一个版本中的贡献：
+
+- **网页开发方向**：袁世蓉，陈亚涵，黄岚，胡思琪
+- **美术设计方向**：陈淑涵，王子瑶
+
+## 版本历史
+
+### 当前版本主要更新
+
+1. 整体架构重构（前后端分离）
+2. 知识图谱的重构、可视化与交互
+3. 新景篇加入打卡和收藏功能
+4. 行迹篇支持用户自定义路线（KML 导入、手动绘制）
+5. 可视化部分（空间可视化、图表可视化）的完善与优化
+6. 多用户数据隔离机制
+
+### 上一个版本
+
+- Gitee 地址：https://gitee.com/chen-yahan/yun-you-shu-dao
+
+## 联系我们
+
+- 📧 **邮箱**：2109451644@qq.com
+- 📱 **电话**：18651653892
+- 🐙 **GitHub**：https://github.com/lkyqiong/shudao_11_24
 
 欢迎提交 Issue 和 Pull Request！
 
 ## 许可证
 
-MIT License
+[MIT License](LICENSE)
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+---
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+© 2024 云游蜀道团队. All Rights Reserved.

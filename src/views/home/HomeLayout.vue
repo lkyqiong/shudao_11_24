@@ -8,8 +8,6 @@
       </div>
 
       <div class="header-right">
-        <div class="ai-btn">AI</div>
-        <input type="text" class="search-box" placeholder="询问问题..." />
         <div class="user-icon" @click="goToProfile">👤</div>
       </div>
     </div>
@@ -61,14 +59,64 @@
 
     <!-- ==================== 内容展示区域 ==================== -->
     <div class="content-section">
-      <div class="content-text">
-        <h2>"云上漫游，踏遍古今蜀路"</h2>
-        <p>云游蜀道——以"地理关联 + AI赋能"为核心，重塑蜀道文化的数字化传承。</p>
-        <p>
-          平台以古迹篇、新景篇、脉络篇、行迹篇为主线，从千年古道到现代文旅，从历史脉络到个性行程，打造一部可交互的蜀道百科全书，让你在地图中读史，在行走中感悟蜀道之魂。
-        </p>
+      <!-- 平台简介 -->
+      <div v-if="activeTab === 'introduction'" class="content-wrapper">
+        <div class="content-text">
+          <h2>"云上漫游，踏遍古今蜀路"</h2>
+          <p>云游蜀道——以"地理关联 + AI赋能"为核心，重塑蜀道文化的数字化传承。</p>
+          <p>
+            平台以古迹篇、新景篇、脉络篇、行迹篇为主线，从千年古道到现代文旅，从历史脉络到个性行程，打造一部可交互的蜀道百科全书，让你在地图中读史，在行走中感悟蜀道之魂。
+          </p>
+        </div>
+        <div class="content-image"></div>
       </div>
-      <div class="content-image"></div>
+
+      <!-- 使用帮助 -->
+      <div v-if="activeTab === 'help'" class="content-wrapper">
+        <div class="content-text">
+          <h2>使用帮助</h2>
+          <p>详细的功能说明、操作指南和技术文档，请参考项目 GitHub 仓库中的 README.md 文件。</p>
+          <p>GitHub 地址：<a href="https://github.com/lkyqiong/shudao_11_24" target="_blank">https://github.com/lkyqiong/shudao_11_24</a></p>
+          <p>如有任何问题或建议，欢迎在 GitHub 上提交 Issue 或联系我们的开发团队。</p>
+        </div>
+        <div class="content-image"></div>
+      </div>
+
+      <!-- 版本介绍 -->
+      <div v-if="activeTab === 'version'" class="content-wrapper">
+        <div class="content-text">
+          <h2>版本介绍</h2>
+          <p>在这个版本中，我们主要尝试新增以下几个功能（整体架构重构除外）：</p>
+          <p>1. 与"云游蜀道"相关的人工智能对话的加入</p>
+          <p>2. 知识图谱的重构、可视化与交互</p>
+          <p>3. 旅游部分逻辑的重构，加入AI景点推荐，移除路线规划</p>
+          <p>4. 可视化部分（空间可视化、图表可视化）的完善与优化</p>
+        </div>
+        <div class="content-image"></div>
+      </div>
+
+      <!-- 联系我们 -->
+      <div v-if="activeTab === 'contact'" class="content-wrapper">
+        <div class="content-text">
+          <h2>联系我们</h2>
+          <p>邮箱：2109451644@qq.com</p>
+          <p>电话：18651653892</p>
+          <p>上一个版本地址：<a href="https://gitee.com/chen-yahan/yun-you-shu-dao" target="_blank">https://gitee.com/chen-yahan/yun-you-shu-dao</a></p>
+        </div>
+        <div class="content-image"></div>
+      </div>
+
+      <!-- 关于我们 -->
+      <div v-if="activeTab === 'about'" class="content-wrapper">
+        <div class="content-text">
+          <h2>关于我们</h2>
+          <p><strong>本组成员：</strong>李坤阳，蔡佳彤，薛景阳</p>
+          <p>同时，感谢另外六位同学在上一个版本中的贡献：</p>
+          <p><strong>网页开发方向：</strong>袁世蓉，陈亚涵，黄岚，胡思琪</p>
+          <p><strong>美术设计方向：</strong>陈淑涵，王子瑶</p>
+        </div>
+        <div class="content-image"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -264,22 +312,39 @@
   /* ==================== 底部导航栏 ==================== */
   .footer-nav {
     background: #d5d5d5;
-    padding: 1.5vh 5vw;
+    padding: 17.5vh 0 1.5vh 0;
     display: flex;
-    gap: 3vw;
+    justify-content: center;
+    gap: 4vw;
     font-size: 1vw;
+    margin-top: -16vh;
+    position: relative;
+    z-index: 5;
   }
 
   .footer-nav span {
     color: #333;
     cursor: pointer;
-    padding-bottom: 0.5vh;
+    padding: 0.5vh 1vw;
     transition: all 0.3s;
+    position: relative;
   }
 
   .footer-nav span.active {
-    border-bottom: 3px solid #333;
     font-weight: bold;
+    color: #5a9090;
+  }
+
+  .footer-nav span.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 3px;
+    background: #5a9090;
+    border-radius: 2px;
   }
 
   .footer-nav span:hover {
@@ -289,13 +354,17 @@
   /* ==================== 内容展示区域 ==================== */
   .content-section {
     background: white;
-    margin: 0 5vw 3vh 5vw;
+    margin: 2vh 5vw 3vh 5vw;
     padding: 3vh 3vw;
     border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    min-height: 25vh;
+  }
+
+  .content-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   }
 
   .content-text {
@@ -304,7 +373,7 @@
   }
 
   .content-text h2 {
-    font-size: 1.8vw;
+    font-size: 1.6vw;
     color: #333;
     margin-bottom: 2vh;
   }
@@ -314,7 +383,20 @@
     color: #666;
     line-height: 2;
     text-align: justify;
-    margin-bottom: 1.5vh;
+    margin-bottom: 1vh;
+  }
+
+  .content-text a {
+    color: #5a9090;
+    text-decoration: none;
+  }
+
+  .content-text a:hover {
+    text-decoration: underline;
+  }
+
+  .content-text strong {
+    color: #333;
   }
 
   .content-image {
@@ -326,5 +408,6 @@
     background-image: url('@/assets/images/building.png');
     background-size: cover;
     background-position: center;
+    flex-shrink: 0;
   }
 </style>

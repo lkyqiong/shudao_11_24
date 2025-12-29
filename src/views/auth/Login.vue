@@ -7,7 +7,7 @@
         <h2>LOG IN</h2>
 
         <!-- 错误提示信息 -->
-        <div v-if="showError" class="error-msg">用户名或密码错误</div>
+        <div v-if="showError" class="error-msg">{{ errorMessage }}</div>
 
         <!-- 用户名输入 -->
         <div class="input-group">
@@ -16,6 +16,7 @@
             type="text"
             placeholder="用户名"
             @keyup.enter="handleLogin"
+            :disabled="isLoading"
           />
         </div>
 
@@ -26,10 +27,13 @@
             type="password"
             placeholder="密码"
             @keyup.enter="handleLogin"
+            :disabled="isLoading"
           />
         </div>
 
-        <button class="login-btn" @click="handleLogin">登录</button>
+        <button class="login-btn" @click="handleLogin" :disabled="isLoading">
+          {{ isLoading ? '登录中...' : '登录' }}
+        </button>
       </div>
 
       <!-- 右侧：欢迎文案和插画 -->
@@ -52,6 +56,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
+  import axios from 'axios';
 
   const router = useRouter();
 
@@ -59,29 +64,62 @@
   const username = ref('');
   const password = ref('');
   const showError = ref(false);
+  const errorMessage = ref('用户名或密码错误');
+  const isLoading = ref(false);
 
   /**
    * 处理登录逻辑
-   * 用户名：lky
-   * 密码：123456
    */
-  const handleLogin = () => {
-    // 验证用户名和密码（硬编码）
-    if (username.value === 'lky' && password.value === '123456') {
-      // 登录成功，设置登录状态
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('username', username.value);
-
-      // 跳转到首页
-      router.push('/home');
-    } else {
-      // 登录失败，显示错误提示
+  const handleLogin = async () => {
+    // 验证输入
+    if (!username.value || !password.value) {
+      errorMessage.value = '请输入用户名和密码';
       showError.value = true;
+      setTimeout(() => {
+        showError.value = false;
+      }, 3000);
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      // 调用登录API
+      const response = await axios.post('http://localhost:8000/api/auth/login', {
+        username: username.value,
+        password: password.value,
+      });
+
+      if (response.data.success) {
+        // 登录成功，保存用户信息
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('username', response.data.data.username);
+        localStorage.setItem('userId', response.data.data.id.toString());
+        if (response.data.data.avatar_url) {
+          localStorage.setItem('avatarUrl', response.data.data.avatar_url);
+        }
+
+        // 跳转到首页
+        router.push('/home');
+      }
+    } catch (error: any) {
+      // 登录失败
+      if (error.response?.status === 401) {
+        errorMessage.value = '用户名或密码错误';
+      } else if (error.response?.data?.detail) {
+        errorMessage.value = error.response.data.detail;
+      } else {
+        errorMessage.value = '登录失败，请稍后重试';
+      }
+
+      showError.value = true;
+      console.error('登录失败:', error);
 
       // 3秒后自动隐藏错误提示
       setTimeout(() => {
         showError.value = false;
       }, 3000);
+    } finally {
+      isLoading.value = false;
     }
   };
 
@@ -177,6 +215,11 @@
     outline: none;
   }
 
+  .input-group input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   .input-group input::placeholder {
     color: #999;
   }
@@ -196,8 +239,13 @@
     transition: background 0.3s;
   }
 
-  .login-btn:hover {
+  .login-btn:hover:not(:disabled) {
     background: #f0f0f0;
+  }
+
+  .login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   /* ==================== 右侧欢迎区域 ==================== */

@@ -25,12 +25,15 @@
           注册成功！即将跳转到登录页...
         </div>
 
+        <!-- 错误提示信息 -->
+        <div v-if="showError" class="error-msg">{{ errorMessage }}</div>
+
         <!-- 用户名输入 -->
         <div class="input-group">
           <input
             v-model="username"
             type="text"
-            placeholder="用户名"
+            placeholder="用户名（3-20个字符）"
             @keyup.enter="handleRegister"
           />
         </div>
@@ -40,12 +43,24 @@
           <input
             v-model="password"
             type="password"
-            placeholder="密码"
+            placeholder="密码（至少6个字符）"
             @keyup.enter="handleRegister"
           />
         </div>
 
-        <button class="register-btn" @click="handleRegister">注册</button>
+        <!-- 确认密码输入 -->
+        <div class="input-group">
+          <input
+            v-model="confirmPassword"
+            type="password"
+            placeholder="确认密码"
+            @keyup.enter="handleRegister"
+          />
+        </div>
+
+        <button class="register-btn" @click="handleRegister" :disabled="isLoading">
+          {{ isLoading ? '注册中...' : '注册' }}
+        </button>
       </div>
     </div>
   </div>
@@ -54,31 +69,80 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
+  import axios from 'axios';
 
   const router = useRouter();
 
   // 表单数据
   const username = ref('');
   const password = ref('');
+  const confirmPassword = ref('');
   const showSuccess = ref(false);
+  const showError = ref(false);
+  const errorMessage = ref('');
+  const isLoading = ref(false);
 
   /**
    * 处理注册逻辑
-   * 简单演示：直接提示注册成功并跳转到登录页
    */
-  const handleRegister = () => {
-    if (!username.value || !password.value) {
-      alert('请填写完整信息');
+  const handleRegister = async () => {
+    // 1. 表单验证
+    if (!username.value || username.value.length < 3 || username.value.length > 20) {
+      showErrorMessage('用户名必须在3-20个字符之间');
       return;
     }
 
-    // 模拟注册成功
-    showSuccess.value = true;
+    if (!password.value || password.value.length < 6) {
+      showErrorMessage('密码至少需要6个字符');
+      return;
+    }
 
-    // 2秒后跳转到登录页
+    if (confirmPassword.value && password.value !== confirmPassword.value) {
+      showErrorMessage('两次输入的密码不一致');
+      return;
+    }
+
+    // 2. 调用注册API
+    isLoading.value = true;
+    try {
+      const response = await axios.post('http://localhost:8000/api/auth/register', {
+        username: username.value,
+        password: password.value,
+      });
+
+      if (response.data.success) {
+        showSuccess.value = true;
+        showError.value = false;
+
+        // 3秒后跳转到登录页
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000);
+      }
+    } catch (error: any) {
+      if (error.response?.data?.detail) {
+        showErrorMessage(error.response.data.detail);
+      } else {
+        showErrorMessage('注册失败，请稍后重试');
+      }
+      console.error('注册失败:', error);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  /**
+   * 显示错误提示
+   */
+  const showErrorMessage = (message: string) => {
+    errorMessage.value = message;
+    showError.value = true;
+    showSuccess.value = false;
+
+    // 3秒后自动隐藏
     setTimeout(() => {
-      router.push('/login');
-    }, 2000);
+      showError.value = false;
+    }, 3000);
   };
 
   /**
@@ -182,11 +246,48 @@
     text-align: center;
     margin-bottom: 4%;
     font-size: 0.9vw;
+    animation: fadeIn 0.5s;
+  }
+
+  /* 错误提示信息 */
+  .error-msg {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    padding: 3%;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 4%;
+    font-size: 0.9vw;
+    animation: shake 0.5s;
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-10px);
+    }
+    75% {
+      transform: translateX(10px);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   /* 输入框容器 */
   .input-group {
-    margin-bottom: 5%;
+    margin-bottom: 4%;
   }
 
   .input-group input {
@@ -214,11 +315,16 @@
     color: #4a8c8c;
     cursor: pointer;
     font-weight: bold;
-    margin-top: 5%;
+    margin-top: 3%;
     transition: background 0.3s;
   }
 
-  .register-btn:hover {
+  .register-btn:hover:not(:disabled) {
     background: #f0f0f0;
+  }
+
+  .register-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 </style>
